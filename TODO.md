@@ -2,29 +2,8 @@
 
 ## 🔥 高优先级（生产必备）
 
-### ⬜ 1. 添加 OpenTelemetry 监控
-**预计时间：30 分钟**
-
-**目标：**
-- 请求链路追踪
-- 性能监控
-- 结构化日志
-
-**需要安装：**
-```bash
-uv add opentelemetry-api opentelemetry-sdk opentelemetry-instrumentation-fastapi
-```
-
-**文件位置：**
-```
-src/
-└── telemetry.py  # 新建配置文件
-```
-
-**功能：**
-- 自动追踪所有 API 请求
-- 记录 workflow 各步骤耗时
-- 追踪 agent 调用性能
+**生产环境扩展（未来）：**
+- 添加 `azure-monitor-opentelemetry` 发送到 Azure Monitor
 
 ---
 
@@ -205,11 +184,11 @@ src/
 - ✅ Dockerfile + docker-compose（前后端一键启动）
 - ✅ MCP 工具集成（chart-generator）
 - ✅ CopilotKit 前端（Next.js）
+- ✅ OpenTelemetry 监控（控制台输出）
+- ✅ pre-commit 配置
 
 **待添加：**
-- ⬜ 监控追踪（OpenTelemetry）
 - ⬜ CI/CD 配置
-- ⬜ pre-commit 配置
 
 ---
 

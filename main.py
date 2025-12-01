@@ -2,11 +2,16 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from agent_framework_ag_ui import add_agent_framework_fastapi_endpoint
+from agent_framework.observability import setup_observability
 from src.services.agent import copilot_agent
 from src.exceptions import register_exception_handlers
 
 # 是否为开发环境
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
+
+# 启用 OpenTelemetry 可观测性
+# enable_sensitive_data=True 会记录 prompt/response 内容（开发环境有用，生产环境慎用）
+setup_observability(enable_sensitive_data=DEBUG)
 
 app = FastAPI(
     title="Flight Agent API",
