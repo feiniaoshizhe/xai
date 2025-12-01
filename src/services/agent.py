@@ -1,11 +1,20 @@
+import os
 from agent_framework import ChatAgent
 from agent_framework.azure import AzureOpenAIChatClient
 from agent_framework_ag_ui import AgentFrameworkAgent
-from azure.identity import AzureCliCredential
+from azure.identity import DefaultAzureCredential
 from .tools import get_flight_price, chart_mcp_tool, run_flight_chart_workflow
 
+
 # Create the chat client
-chat_client = AzureOpenAIChatClient(credential=AzureCliCredential())
+# DefaultAzureCredential 自动选择认证方式：
+# - 本地：使用 Azure CLI 登录凭证
+# - 云端：使用 Managed Identity
+chat_client = AzureOpenAIChatClient(
+    credential=DefaultAzureCredential(),
+    endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+    deployment_name=os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME", "gpt-5-nano"),
+)
 
 # Flight Price Agent - 查询机票价格
 flight_agent = chat_client.create_agent(
@@ -16,7 +25,7 @@ flight_agent = chat_client.create_agent(
 
 # Chart Agent - 生成图表
 chart_agent = chat_client.create_agent(
-    instructions="""You are a chart generation assistant. 
+    instructions="""You are a chart generation assistant.
 When you receive flight price information in JSON format:
 1. Parse the JSON data (departure, destination, price, airline, flight_class)
 2. You MUST call the chart tool to generate a table/chart with this data
