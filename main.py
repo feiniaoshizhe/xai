@@ -11,12 +11,7 @@ DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 
 # 配置 OpenTelemetry - Agent Framework 内置支持 Azure Monitor
 # 参考：https://learn.microsoft.com/azure/ai-services/agents/how-to/observability
-setup_observability(
-    enable_sensitive_data=DEBUG,  # 开发环境记录敏感数据（prompt/response）
-    applicationinsights_connection_string=os.getenv(
-        "APPLICATIONINSIGHTS_CONNECTION_STRING"
-    ),
-)
+setup_observability()
 
 app = FastAPI(
     title="Flight Agent API",
