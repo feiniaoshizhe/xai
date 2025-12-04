@@ -4,41 +4,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from agent_framework_ag_ui import add_agent_framework_fastapi_endpoint
 from src.services.agent import copilot_agent
 from src.exceptions import register_exception_handlers
-from azure.monitor.opentelemetry import configure_azure_monitor
 from agent_framework.observability import setup_observability
 
 # 是否为开发环境
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 
-
-# 配置 OpenTelemetry 导出到 Azure Monitor
-def setup_azure_monitor():
-    """配置 OpenTelemetry 导出到 Azure Application Insights"""
-    connection_string = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
-
-    if connection_string:
-        # 生产环境：导出到 Azure Monitor
-
-        # 配置 Azure Monitor（会自动配置 OpenTelemetry）
-        configure_azure_monitor(
-            connection_string=connection_string,
-            enable_live_metrics=True,  # 启用实时指标
-        )
-
-        # Agent Framework 的可观测性配置
-        setup_observability(enable_sensitive_data=DEBUG)
-
-        print("✅ OpenTelemetry exporting to Azure Monitor")
-    else:
-        # 本地开发：输出到控制台
-
-        setup_observability(enable_sensitive_data=DEBUG)
-        print(
-            "⚠️  APPLICATIONINSIGHTS_CONNECTION_STRING not set, using console exporter"
-        )
-
-
-setup_azure_monitor()
+# 配置 OpenTelemetry - Agent Framework 内置支持 Azure Monitor
+# 参考：https://learn.microsoft.com/azure/ai-services/agents/how-to/observability
+setup_observability(
+    enable_sensitive_data=DEBUG,  # 开发环境记录敏感数据（prompt/response）
+    applicationinsights_connection_string=os.getenv(
+        "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    ),
+)
 
 app = FastAPI(
     title="Flight Agent API",

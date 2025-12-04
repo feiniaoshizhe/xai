@@ -1181,7 +1181,7 @@ requires-dist = [
     { name = "agent-framework-azure-ai", specifier = ">=1.0.0b251120" },
     { name = "azure-ai-agents", specifier = ">=1.1.0" },
     { name = "azure-identity", specifier = ">=1.25.1" },
-    { name = "azure-monitor-opentelemetry", specifier = ">=1.7.0" },
+    { name = "azure-monitor-opentelemetry", specifier = ">=1.8.2" },
     { name = "fastapi", specifier = ">=0.121.3" },
 ]
 
