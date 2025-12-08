@@ -1,4 +1,4 @@
-# MAF - Microsoft Agent Framework Template
+# MAF - AG-UI Azure Agent Template
 
 A production-ready template for building AI-powered products using **Microsoft Agent Framework**, **CopilotKit**, and **Azure Services**. This template follows the **AG-UI protocol** standard and implements modern AI application architecture patterns.
 
@@ -118,8 +118,8 @@ maf/
 ### 1. Clone and Configure
 
 ```bash
-git clone https://github.com/xxyckiki/maf-copilotkit-agent-template.git
-cd maf-copilotkit-agent-template
+git clone https://github.com/xxyckiki/MAF-AGUI-Azure-Template.git
+cd MAF-AGUI-Azure-Template
 
 # Copy environment variables
 cp .env.example .env
