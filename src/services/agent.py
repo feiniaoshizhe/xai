@@ -8,6 +8,7 @@ from azure.identity import (
     ChainedTokenCredential,
 )
 from .tools import get_flight_price, chart_mcp_tool, run_flight_chart_workflow
+from ..db import CosmosChatMessageStore
 
 
 def get_credential():
@@ -65,6 +66,10 @@ copilot_base_agent = ChatAgent(
 始终用中文友好地回复用户。如果用户只是打招呼，先问他们需要查询什么航线的机票。""",
     chat_client=chat_client,
     tools=[run_flight_chart_workflow],
+    chat_message_store_factory=lambda: CosmosChatMessageStore(
+        session_id=os.getenv("DEFAULT_SESSION_ID", "default_session"),
+        max_messages=100,  # 最多保留100条消息
+    ),
 )
 
 # Wrap with AgentFrameworkAgent for AG-UI protocol

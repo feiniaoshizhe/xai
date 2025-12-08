@@ -1,10 +1,14 @@
 import os
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from agent_framework_ag_ui import add_agent_framework_fastapi_endpoint
 from src.services.agent import copilot_agent
 from src.exceptions import register_exception_handlers
 from agent_framework.observability import setup_observability
+
+# 加载 .env 文件
+load_dotenv()
 
 # 是否为开发环境
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"

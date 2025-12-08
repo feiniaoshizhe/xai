@@ -18,6 +18,8 @@ GitHub Repository
     │   Azure Container App (mafagent)
     │       ↓ (authenticate)
     │   Azure OpenAI (Managed Identity)
+    │       ↓ (send telemetry)
+    │   Application Insights (OpenTelemetry)
     │
     └─→ Frontend CI/CD (GitHub Actions)
             ↓ (build Next.js)
@@ -43,6 +45,8 @@ GitHub Repository
 - Azure OpenAI 服务 (`llmmvptest1`)
   - 部署名称：`gpt-5-nano`
   - 端点：`https://llmmvptest1.openai.azure.com/`
+- Application Insights (`mafagent-insights`)
+  - 用于收集 OpenTelemetry traces、logs、metrics
 
 ---
 
@@ -140,9 +144,75 @@ GitHub Repository
 
 ---
 
-### 第五步：配置 GitHub Actions CI/CD
+### 第五步：配置 Application Insights
 
-#### 5.1 配置自动部署
+#### 5.1 创建 Application Insights 资源
+
+1. 搜索 **Application Insights** → 创建
+2. 填写配置：
+   - **Resource group**: `llmmvp`（与 Container App 同组）
+   - **Name**: `mafagent-insights`
+   - **Region**: `Japan East`
+   - **Resource Mode**: `Workspace-based`（推荐）
+3. 点击 **Review + create** → **Create**
+
+#### 5.2 获取 Connection String
+
+1. 进入创建好的 Application Insights 资源
+2. 左侧 **Configure → Properties** 或 **Overview**
+3. 复制 **Connection String**（格式：`InstrumentationKey=xxx;IngestionEndpoint=https://...`）
+
+#### 5.3 配置环境变量
+
+1. 回到 Container App → **Settings → Environment variables**
+2. 点击 **Edit and deploy** 或 **Add**
+3. 添加环境变量：
+
+| Name | Value |
+|------|-------|
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | `InstrumentationKey=9688fd18-d9db-48d7-bd9d-1dde0f488847;IngestionEndpoint=https://japaneast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://japaneast.livediagnostics.monitor.azure.com/;ApplicationId=xxx` |
+
+4. 点击 **Save**
+
+> ℹ️ **说明**：`setup_observability()` 会自动读取此环境变量，将 OpenTelemetry 数据发送到 Azure Monitor。
+
+#### 5.4 查看遥测数据
+
+部署后，可以在 Application Insights 中查看：
+
+1. **Traces（跟踪）**：
+   - 左侧 **Investigate → Transaction search**
+   - 可以看到每次 API 调用的完整链路
+   - 包括 Agent 执行、工具调用、OpenAI 请求等
+
+2. **Logs（日志）**：
+   - 左侧 **Monitoring → Logs**
+   - 查询示例：
+     ```kusto
+     traces
+     | where timestamp > ago(1h)
+     | order by timestamp desc
+     ```
+
+3. **Metrics（指标）**：
+   - 左侧 **Monitoring → Metrics**
+   - 可以查看请求数、响应时间、token 消耗等
+
+#### 5.5 依赖版本说明
+
+由于 OpenTelemetry SDK 1.39.0 与 `azure-monitor-opentelemetry-exporter 1.0.0b45` 不兼容，项目暂时锁定 `opentelemetry-sdk==1.38.0`。
+
+**相关 GitHub Issues**：
+- [#44237](https://github.com/Azure/azure-sdk-for-python/issues/44237)
+- [#44236](https://github.com/Azure/azure-sdk-for-python/issues/44236)
+
+微软团队已承诺修复，预计近期发布新版本。届时可以移除版本锁定。
+
+---
+
+### 第六步：配置 GitHub Actions CI/CD
+
+#### 6.1 配置自动部署
 
 1. Container App → **Settings → Deployment**
 2. 点击 **Continuous deployment** 标签页
@@ -160,7 +230,7 @@ GitHub Repository
    - **Authentication type**: `User-assigned Identity` ✅
 7. 点击 **Start continuous deployment**
 
-#### 5.2 修复自动生成的 Workflow
+#### 6.2 修复自动生成的 Workflow
 
 Azure 生成的 workflow 文件可能有占位符错误，需要手动修复：
 
@@ -186,9 +256,9 @@ git push
 
 ---
 
-### 第六步：修改代码支持云端部署
+### 第七步：修改代码支持云端部署
 
-#### 6.1 使用 ChainedTokenCredential
+#### 7.1 使用 ChainedTokenCredential
 
 **文件**：`src/services/agent.py`
 
@@ -215,7 +285,7 @@ chat_client = AzureOpenAIChatClient(
 )
 ```
 
-#### 6.2 推送代码触发部署
+#### 7.2 推送代码触发部署
 
 ```bash
 git add .
@@ -468,6 +538,7 @@ AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-5-nano
 ```
 AZURE_OPENAI_ENDPOINT=https://llmmvptest1.openai.azure.com/
 AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-5-nano
+APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=9688fd18-d9db-48d7-bd9d-1dde0f488847;IngestionEndpoint=https://japaneast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://japaneast.livediagnostics.monitor.azure.com/;ApplicationId=xxx
 ```
 
 **Azure Static Web Apps - Frontend**（Environment variables）：
@@ -477,9 +548,9 @@ BACKEND_URL=https://mafagent.bravebeach-3e2d28d0.japaneast.azurecontainerapps.io
 
 ---
 
-## 第七步：前端部署到 Azure Static Web Apps
+## 第八步：前端部署到 Azure Static Web Apps
 
-### 7.1 创建 Static Web App
+### 8.1 创建 Static Web App
 
 1. 访问 [Azure Portal](https://portal.azure.com)
 2. 搜索 **Static Web Apps** → 创建
@@ -502,7 +573,7 @@ BACKEND_URL=https://mafagent.bravebeach-3e2d28d0.japaneast.azurecontainerapps.io
 
 5. 点击 **Review + create** → **Create**
 
-### 7.2 配置前端环境变量
+### 8.2 配置前端环境变量
 
 1. 等待 Static Web App 创建完成
 2. 进入 `maf-frontend` 资源
@@ -514,7 +585,7 @@ BACKEND_URL=https://mafagent.bravebeach-3e2d28d0.japaneast.azurecontainerapps.io
    - **Value**: `https://mafagent.bravebeach-3e2d28d0.japaneast.azurecontainerapps.io`
 7. 点击 **Apply**
 
-### 7.3 修复 CI/CD Workflow（如果需要）
+### 8.3 修复 CI/CD Workflow（如果需要）
 
 Azure 会自动创建 workflow 文件并推送到你的仓库。如果遇到依赖冲突问题，需要修改 workflow：
 
@@ -572,7 +643,7 @@ git commit -m "Fix: Frontend build with Node 20 and legacy-peer-deps"
 git push
 ```
 
-### 7.4 验证前端部署
+### 8.4 验证前端部署
 
 1. **查看部署状态**：
    - Static Web App → **Overview**

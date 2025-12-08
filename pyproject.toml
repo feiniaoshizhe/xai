@@ -9,10 +9,12 @@ dependencies = [
     "agent-framework-ag-ui>=1.0.0b251120",
     "agent-framework-azure-ai>=1.0.0b251120",
     "azure-ai-agents>=1.1.0",
+    "azure-cosmos>=4.14.2",
     "azure-identity>=1.25.1",
     "azure-monitor-opentelemetry>=1.8.2",
     "fastapi>=0.121.3",
-    "opentelemetry-sdk==1.38.0",  # 临时锁定版本，等待 azure-monitor 修复
+    "opentelemetry-sdk==1.38.0",
+    "python-dotenv>=1.2.1",
 ]
 
 [dependency-groups]

@@ -1,158 +1,34 @@
 # 项目待办事项清单
 
 ## 🔥 高优先级（生产必备）
-
-**生产环境扩展（未来）：**
-- 添加 `azure-monitor-opentelemetry` 发送到 Azure Monitor
-
----
-
-### ⬜ 2. 配置 CI/CD 自动部署
-**预计时间：15-30 分钟**
-
-**目标：**
-- 自动化部署流程
-- push 到 GitHub 后自动部署到 Azure
-
-**方式选择：**
-
-#### 🚀 方式 1：Azure 自动 CI/CD（推荐新手）
-**优点：** 最简单，Azure 自动配置一切
-
-**步骤：**
-1. 在 Azure Portal 创建 Container App
-2. 选择 Deployment source: "GitHub"
-3. 授权并选择你的仓库
-4. Azure 自动创建 `.github/workflows/` 文件
-
-**结果：**
-- ✅ push 后自动构建 + 部署
-- ✅ 无需手动配置 secrets
-- ✅ 5-10 分钟完成部署
-
----
-
-#### ⚙️ 方式 2：自定义 GitHub Actions（更灵活）
-**优点：** 完全控制部署流程
-
-**文件位置：**
-```
-.github/
-└── workflows/
-    └── deploy.yml  # CI/CD 配置
-```
-
-**流程：**
-```yaml
-1. test 阶段        # 运行测试 + 代码检查
-   ↓
-2. build 阶段       # 构建 Docker 镜像
-   ↓
-3. deploy 阶段      # 部署到 Azure
-```
-
-**需要配置的 GitHub Secrets：**
-```
-AZURE_CREDENTIALS    # Azure 服务主体凭证
-ACR_USERNAME         # Container Registry 用户名
-ACR_PASSWORD         # Container Registry 密码
-```
-
-**完整 workflow 示例：**
-```yaml
-# .github/workflows/deploy.yml
-name: CI/CD Pipeline
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-env:
-  REGISTRY: <your-registry>.azurecr.io
-  IMAGE_NAME: maf
-  RESOURCE_GROUP: maf-rg
-  CONTAINER_APP: maf-app
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.13'
-      - name: Install uv
-        run: curl -LsSf https://astral.sh/uv/install.sh | sh
-      - name: Install dependencies
-        run: uv sync
-      - name: Run tests
-        run: uv run pytest tests/
-      - name: Run linter
-        run: uv run ruff check .
-
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Log in to ACR
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ env.REGISTRY }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
-      - name: Build and push
-        run: |
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - uses: azure/container-apps-deploy-action@v1
-        with:
-          resourceGroup: ${{ env.RESOURCE_GROUP }}
-          containerAppName: ${{ env.CONTAINER_APP }}
-          imageToDeploy: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-```
-
-**对比选择：**
-| 特性 | Azure 自动 | 自定义 GitHub Actions |
-|------|-----------|---------------------|
-| 设置难度 | ⭐ 简单 | ⭐⭐⭐ 中等 |
-| 灵活性 | 固定流程 | 完全自定义 |
-| 自动测试 | ❌ 无 | ✅ 有 |
-| 多环境 | ❌ 单环境 | ✅ dev/staging/prod |
-
-**建议：** 先用 Azure 自动方式快速上线，后期需要时切换到自定义方式
-
 ---
 
 ## ⚡ 中优先级（提升开发体验）
 
 ## 💾 未来扩展（有数据库需求时）
 
-### ⏸️ 4. 添加数据持久化层
-**仅在需要时添加**
+### ✅ 4. 数据持久化层（已完成）
+**Azure Cosmos DB for NoSQL**
 
-**触发条件：**
-- 需要持久化 session（Redis）
-- 需要保存对话历史（数据库）
-
-**需要添加：**
+**已添加：**
 ```
 src/
-├── models/         # 数据库表定义（SQLAlchemy）
-├── db/             # 数据库连接配置
-└── repositories/   # 数据访问层
+├── db/             # Cosmos DB 连接配置
+│   ├── __init__.py
+│   └── cosmos.py
+├── models/         # 数据模型（Pydantic）
+│   ├── __init__.py
+│   └── conversation.py
+└── repositories/   # 数据访问层（CRUD）
+    ├── __init__.py
+    └── conversation_repo.py
 ```
+
+**配置：**
+- 认证方式：Azure Identity（ManagedIdentity + AzureCLI）
+- 环境变量：`COSMOS_ENDPOINT`
+- 数据库：`maf_db`
+- 容器：`conversations`（分区键：`/session_id`）
 
 ---
 
@@ -184,11 +60,13 @@ src/
 - ✅ Dockerfile + docker-compose（前后端一键启动）
 - ✅ MCP 工具集成（chart-generator）
 - ✅ CopilotKit 前端（Next.js）
-- ✅ OpenTelemetry 监控（控制台输出）
+- ✅ OpenTelemetry 监控（Azure Monitor 集成）
+- ✅ Application Insights（traces、logs、metrics）
 - ✅ pre-commit 配置
+- ✅ 数据持久化层（Azure Cosmos DB）
 
 **待添加：**
-- ⬜ CI/CD 配置
+- ⬜ 升级 azure-monitor-opentelemetry-exporter（等待微软修复兼容性）
 
 ---
 
