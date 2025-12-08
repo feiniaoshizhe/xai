@@ -2,6 +2,8 @@
 
 A production-ready template for building AI-powered products using **Microsoft Agent Framework**, **CopilotKit**, and **Azure Services**. This template follows the **AG-UI protocol** standard and implements modern AI application architecture patterns.
 
+![Architecture Diagram](docs/images/architect.png)
+
 ## 🌟 What is this?
 
 This is a **starter template** for building AI chat applications with:
@@ -34,6 +36,9 @@ The template demonstrates a **flight price query assistant** that:
 | **Deployment** | ☁️ Azure Container Apps + Static Web Apps |
 
 ## 🏗️ Architecture
+
+<details>
+<summary>Click to expand text version</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -79,6 +84,8 @@ The template demonstrates a **flight price query assistant** that:
 │  └──────────────┘ └──────────────┘ └────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+</details>
 
 ## 📁 Project Structure
 
