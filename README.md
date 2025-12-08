@@ -184,4 +184,4 @@ This template deploys to Azure with:
 - **[OpenTelemetry](https://opentelemetry.io)** - Observability
 
 ## 📄 License
-MIT
+Apache 2.0
