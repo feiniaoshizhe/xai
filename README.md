@@ -33,6 +33,7 @@ The template demonstrates a **flight price query assistant** that:
 | **Database** | 💾 Azure Cosmos DB (conversation persistence) |
 | **Security** | 🛡️ Agent middleware (prompt injection detection, input validation) |
 | **Observability** | 📊 OpenTelemetry → Azure Application Insights |
+| **Infrastructure** | 🏗️ Terraform (Infrastructure as Code for one-command deployment) |
 | **DevOps** | 🐳 Docker Compose (local) + GitHub Actions → Azure Container Registry (CI/CD) |
 | **Deployment** | ☁️ Azure Container Apps + Static Web Apps |
 
@@ -111,6 +112,11 @@ maf/
 │       ├── layout.tsx          #    App layout with CopilotKit provider
 │       ├── page.tsx            #    Chat UI component
 │       └── api/copilotkit/     #    API route (proxy to backend via AG-UI)
+├── terraform/                  # 🏗️ Infrastructure as Code
+│   ├── main.tf                 #    Azure resource definitions
+│   ├── variables.tf            #    Configurable variables
+│   ├── outputs.tf              #    Resource outputs (URLs, keys, etc.)
+│   └── README.md               #    Terraform usage guide
 ├── docker-compose.yml          # 🐳 Local development (one command)
 └── Dockerfile                  # 📦 Backend container
 ```
@@ -170,7 +176,33 @@ npm run dev                          # Run dev server
 
 ## ☁️ Azure Deployment
 
-This template deploys to Azure with:
+### Option 1: Terraform (Recommended - One Command Deployment)
+
+Deploy entire infrastructure with Terraform:
+
+```bash
+cd terraform
+
+# Configure variables
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars with your subscription ID
+
+# Deploy
+terraform init
+terraform plan
+terraform apply
+
+# Get all configuration values (API keys, endpoints, etc.)
+terraform output
+```
+
+See [terraform/README.md](terraform/README.md) for detailed instructions.
+
+### Option 2: Manual Deployment
+
+This template can also be deployed manually using Azure Portal or CLI.
+
+### Azure Resources
 
 | Component | Azure Service | Auth |
 |-----------|---------------|------|

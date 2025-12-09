@@ -1,0 +1,70 @@
+# ============================================================================
+# MAF Terraform Configuration Example
+#
+# Copy this file to terraform.tfvars and fill in your values:
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# Note: terraform.tfvars contains sensitive data and should NOT be committed to git
+# ============================================================================
+
+# ============================================================================
+# Project Configuration
+# ============================================================================
+
+project_name = "maf"
+environment  = "prod"
+location     = "eastus"
+
+# Resource Group (optional)
+# Leave empty to auto-generate, or specify existing name like "llmmvp"
+resource_group_name = ""  # or "llmmvp" to use existing
+
+# ============================================================================
+# Container Configuration
+# ============================================================================
+
+container_app_name        = "mafagent"
+container_app_min_replicas = 1
+container_app_max_replicas = 3
+container_cpu             = 1.0
+container_memory          = "2Gi"
+
+# Container Registry SKU (Basic, Standard, Premium)
+acr_sku = "Basic"
+
+# ============================================================================
+# Azure OpenAI Configuration
+# ============================================================================
+
+openai_deployment_name = "gpt-5-nano"      # Your deployment name
+openai_model_name      = "gpt-4o-mini"     # Model to deploy
+openai_model_version   = "2024-07-18"      # Model version
+openai_capacity        = 10                # TPM capacity (in thousands)
+openai_sku_name        = "S0"
+
+# ============================================================================
+# Cosmos DB Configuration
+# ============================================================================
+
+cosmos_db_name         = "maf_db"
+cosmos_container_name  = "conversations"
+cosmos_partition_key   = "/session_id"
+cosmos_throughput      = 400  # RU/s (minimum 400)
+
+# ============================================================================
+# Static Web App Configuration
+# ============================================================================
+
+static_web_app_sku_tier = "Free"  # or "Standard"
+static_web_app_sku_size = "Free"
+
+# ============================================================================
+# Tags
+# ============================================================================
+
+tags = {
+  Project     = "MAF"
+  ManagedBy   = "Terraform"
+  Environment = "Production"
+  Owner       = "YourName"
+}
