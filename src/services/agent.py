@@ -9,6 +9,7 @@ from azure.identity import (
 )
 from .tools import get_flight_price, chart_mcp_tool, run_flight_chart_workflow
 from ..db import CosmosChatMessageStore
+from ..middleware import security_agent_middleware, security_function_middleware
 
 
 def get_credential():
@@ -33,6 +34,7 @@ flight_agent = chat_client.create_agent(
     instructions="You are a flight price assistant. Help users check flight ticket prices between different locations.",
     name="FlightPriceAgent",
     tools=[get_flight_price],
+    middleware=[security_agent_middleware, security_function_middleware],
 )
 
 # Chart Agent - Generate charts
@@ -52,6 +54,7 @@ I've generated a table for you, please check: [URL from tool]"
 Remember: Always call the chart tool, don't skip it!""",
     name="ChartGeneratorAgent",
     tools=[chart_mcp_tool],
+    middleware=[security_agent_middleware, security_function_middleware],
 )
 
 # CopilotKit Agent - For frontend AG-UI connection
@@ -66,6 +69,7 @@ When a user asks about flight prices:
 Always respond in a friendly manner. If the user just says hello, ask them which route they want to query.""",
     chat_client=chat_client,
     tools=[run_flight_chart_workflow],
+    middleware=[security_agent_middleware, security_function_middleware],
     chat_message_store_factory=lambda: CosmosChatMessageStore(
         session_id=os.getenv("DEFAULT_SESSION_ID", "default_session"),
         max_messages=100,  # Keep up to 100 messages

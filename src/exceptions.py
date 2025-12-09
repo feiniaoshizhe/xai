@@ -103,6 +103,17 @@ class ConfigurationError(AppException):
         )
 
 
+class SecurityError(AppException):
+    """Security validation error"""
+
+    def __init__(self, message: str = "Security validation failed"):
+        super().__init__(
+            message=message,
+            status_code=status.HTTP_403_FORBIDDEN,
+            error_type="SecurityError",
+        )
+
+
 # ============================================================================
 # Global Exception Handlers
 # ============================================================================

@@ -12,7 +12,7 @@ This is a **starter template** for building AI chat applications with:
 - **Azure-native** - Built with Azure Services (OpenAI, Cosmos DB, Container Apps, Application Insights, etc.)
 - **Agent Workflow** - Multi-agent orchestration with tools and MCP (Model Context Protocol) integration
 - **Modern Architecture** - Clean separation of concerns with modular folder structure
-- **Production Features** - Auth, persistence, observability, CI/CD included
+- **Production Features** - Auth, persistence, observability, security middleware, CI/CD included
 
 ### Demo Use Case
 
@@ -31,6 +31,7 @@ The template demonstrates a **flight price query assistant** that:
 | **Backend** | ⚡ FastAPI + Microsoft Agent Framework |
 | **LLM** | 🧠 Azure OpenAI (Managed Identity auth) |
 | **Database** | 💾 Azure Cosmos DB (conversation persistence) |
+| **Security** | 🛡️ Agent middleware (prompt injection detection, input validation) |
 | **Observability** | 📊 OpenTelemetry → Azure Application Insights |
 | **DevOps** | 🐳 Docker Compose (local) + GitHub Actions → Azure Container Registry (CI/CD) |
 | **Deployment** | ☁️ Azure Container Apps + Static Web Apps |
@@ -102,6 +103,7 @@ maf/
 │   │   └── cosmos_chat_store.py#    Chat message persistence for Agent Framework
 │   ├── schemas/                # 📋 Data models (Pydantic)
 │   │   └── flight.py           #    Flight data schema
+│   ├── middleware.py           # 🛡️ Security middleware (prompt injection detection)
 │   └── exceptions.py           # ⚠️ Global exception handling
 ├── tests/                      # 🧪 Unit tests (pytest)
 ├── frontend/                   # 🎨 Next.js + CopilotKit
