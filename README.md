@@ -1,7 +1,8 @@
 # MAF - AG-UI Azure Agent Template
 
-This repository provides a fully structured template for building AI agent applications on Azure using the Microsoft Agent Framework, AG-UI protocol, CopilotKit UI, and Azure-native services.
-The template defines a clear separation between UI orchestration, agent execution, tool integration, and cloud-based observability, enabling teams to adopt agent-driven application architectures with minimal boilerplate.
+**A structured and production-ready template for AI agent development.**
+It combines the Microsoft Agent Framework, AG-UI, CopilotKit UI, and Azure services in a clean structure.
+The design keeps the frontend, agent logic, tools, and observability separate, so you can build agent-driven apps with minimal setup.
 
 ![Architecture Diagram](docs/images/architect.png)
 
