@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from agent_framework_ag_ui import add_agent_framework_fastapi_endpoint
+
+from src.api.router import app_router
 from src.services.agent import copilot_agent
 from src.exceptions import register_exception_handlers
 from agent_framework.observability import setup_observability
@@ -34,6 +36,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(app_router)
 
 # Register AG-UI endpoint for CopilotKit connection
 add_agent_framework_fastapi_endpoint(

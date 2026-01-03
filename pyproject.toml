@@ -13,6 +13,9 @@ dependencies = [
     "azure-identity>=1.25.1",
     "azure-monitor-opentelemetry>=1.8.2",
     "fastapi>=0.121.3",
+    "langchain-core>=1.2.6",
+    "langfuse>=3.11.2",
+    "langgraph>=1.0.5",
     "opentelemetry-sdk==1.38.0",
     "python-dotenv>=1.2.1",
 ]
