@@ -1,12 +1,15 @@
 import os
+
+from ag_ui_langgraph import add_langgraph_fastapi_endpoint
+from copilotkit import LangGraphAGUIAgent
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from agent_framework_ag_ui import add_agent_framework_fastapi_endpoint
+# from agent_framework_ag_ui import add_agent_framework_fastapi_endpoint
 
 from src.api.router import app_router
-from src.services.agent import copilot_agent
-from src.exceptions import register_exception_handlers
+# from src.services.agent import copilot_agent
+from src.core.exceptions import register_exception_handlers
 from agent_framework.observability import setup_observability
 
 # Load environment variables from .env file
@@ -40,11 +43,15 @@ app.add_middleware(
 app.include_router(app_router)
 
 # Register AG-UI endpoint for CopilotKit connection
-add_agent_framework_fastapi_endpoint(
-    app=app,
-    agent=copilot_agent,
-    path="/copilotkit",
-)
+# add_langgraph_fastapi_endpoint(
+#   app=app,
+#   agent=LangGraphAGUIAgent(
+#     name="sample_agent",
+#     description="An example agent to use as a starting point for your own agent.",
+#     graph=langgraph_agent,
+#   ),
+#   path="/langgraph/gym_agent",
+# )
 
 
 @app.get("/")

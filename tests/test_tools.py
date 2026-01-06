@@ -6,7 +6,7 @@ Test naming convention: test_<function_name>_<scenario>
 
 import pytest
 from src.services.tools import get_flight_price
-from src.exceptions import ToolError
+from src.core.exceptions import ToolError
 
 
 class TestGetFlightPrice:

@@ -4,7 +4,7 @@ Unit tests for exceptions module.
 
 import pytest
 from fastapi import status
-from src.exceptions import (
+from src.core.exceptions import (
     AppException,
     AgentError,
     WorkflowError,

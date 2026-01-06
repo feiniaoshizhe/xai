@@ -1,9 +1,22 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from enum import Enum
+
+from pydantic_settings import SettingsConfigDict
 
 from .deploy import DeploymentConfig
 from .middleware import MiddlewareConfig
 from .packaging import PackagingInfo
 
+class Environment(str, Enum):
+    """Application environment types.
+
+    Defines the possible environments the application can run in:
+    development, staging, production, and test.
+    """
+
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
+    TEST = "test"
 
 class Settings(
     PackagingInfo,

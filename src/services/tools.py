@@ -1,7 +1,7 @@
 from typing import Annotated
 from pydantic import Field
-from agent_framework import ai_function, MCPStdioTool, WorkflowOutputEvent
-from ..exceptions import ToolError
+# from agent_framework import ai_function, MCPStdioTool, WorkflowOutputEvent
+from src.core.exceptions import ToolError
 
 
 @ai_function(
@@ -58,7 +58,7 @@ async def run_flight_chart_workflow(
     ],
 ) -> str:
     """Execute the flight-chart workflow and return the result."""
-    from ..exceptions import WorkflowError
+    from src.core.exceptions import WorkflowError
 
     try:
         # Validate input

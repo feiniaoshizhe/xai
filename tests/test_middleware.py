@@ -21,7 +21,7 @@ from src.middleware import (
     PROMPT_INJECTION_PATTERNS,
     SENSITIVE_KEYWORDS,
 )
-from src.exceptions import SecurityError
+from src.core.exceptions import SecurityError
 
 
 class TestSecurityAgentMiddleware:

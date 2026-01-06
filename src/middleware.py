@@ -68,7 +68,7 @@ async def security_agent_middleware(
     Raises:
         SecurityError: If validation fails
     """
-    from .exceptions import SecurityError
+    from src.core.exceptions import SecurityError
 
     # Get user input from the last message (per official docs)
     last_message = context.messages[-1] if context.messages else None
@@ -137,7 +137,7 @@ async def security_function_middleware(
     Raises:
         SecurityError: If validation fails
     """
-    from .exceptions import SecurityError
+    from src.core.exceptions import SecurityError
 
     # Safely get function name and arguments
     function_name = "unknown"

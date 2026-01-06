@@ -1,9 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, Depends
+
+from src.core.logger import logger
 
 router = APIRouter()
 
 @router.post("/chat/stream")
-@limiter.limit(settings.RATE_LIMIT_ENDPOINTS["chat_stream"][0])
 async def chat_stream(
     request: Request,
     chat_request: ChatRequest,

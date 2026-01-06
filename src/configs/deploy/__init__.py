@@ -28,7 +28,7 @@ class DeploymentConfig(BaseSettings):
         default="SELF_HOSTED",
     )
 
-    DEPLOY_ENV: str = Field(
-        description="Deployment environment (e.g., 'PRODUCTION', 'DEVELOPMENT'), default to PRODUCTION",
-        default="PRODUCTION",
+    ENVIRONMENT: str = Field(
+        description="Deployment environment (e.g., 'production', 'development'), default to production",
+        default="production",
     )
